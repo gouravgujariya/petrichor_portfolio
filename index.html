@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petrichor — Mellow Out With Us</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:           #06060e;
+            --bg2:          #0c0c18;
+            --pink:         #f4a8c0;
+            --purple:       #c8a0e0;
+            --lavender:     #a8bef4;
+            --gold:         #f0cc78;
+            --text:         #f0ece8;
+            --dim:          rgba(240,236,232,0.55);
+            --grad:         linear-gradient(135deg,#f9c6d3 0%,#e8b0e8 35%,#a8bef4 68%,#f5d6a0 100%);
+            --grad-text:    linear-gradient(120deg,#f9c6d3,#d8a8e8,#a8bef4,#f4c878);
+            --glass:        rgba(255,255,255,0.035);
+            --glass-md:     rgba(255,255,255,0.06);
+            --border:       rgba(255,255,255,0.07);
+            --border-hover: rgba(200,160,224,0.25);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ─── SCROLLBAR ─────────────────────────────── */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 2px; }
+
+        /* ─── GRAIN TEXTURE ─────────────────────────── */
+        body::after {
+            content: '';
+            position: fixed; inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            opacity: 0.022; pointer-events: none; z-index: 9999;
+        }
+
+        /* ─── NAV ────────────────────────────────────── */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+            padding: 1.4rem 3.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            backdrop-filter: blur(16px) saturate(1.4);
+            background: rgba(6,6,14,0.55);
+            border-bottom: 1px solid var(--border);
+            transition: background 0.4s;
+        }
+        nav.scrolled { background: rgba(6,6,14,0.92); }
+
+        .nav-logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.9rem; font-weight: 700;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; letter-spacing: 0.01em;
+            text-decoration: none;
+        }
+
+        .nav-links { display: flex; gap: 2.5rem; list-style: none; align-items: center; }
+        .nav-links a {
+            color: var(--dim); text-decoration: none;
+            font-size: 0.78rem; font-weight: 400; letter-spacing: 0.13em; text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--text); }
+
+        .nav-cta {
+            padding: 0.55rem 1.5rem !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 999px !important;
+            background: var(--glass) !important;
+            color: var(--text) !important;
+            transition: border-color 0.3s, background 0.3s !important;
+            letter-spacing: 0.08em !important;
+        }
+        .nav-cta:hover {
+            background: rgba(200,160,224,0.12) !important;
+            border-color: var(--purple) !important;
+            color: var(--text) !important;
+        }
+
+        .nav-hamburger {
+            display: none; flex-direction: column; gap: 5px;
+            cursor: pointer; padding: 4px;
+        }
+        .nav-hamburger span {
+            width: 24px; height: 1.5px;
+            background: var(--dim); border-radius: 2px; transition: 0.3s;
+        }
+
+        /* ─── HERO ───────────────────────────────────── */
+        #hero {
+            position: relative; min-height: 100vh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center; padding: 7rem 2rem 5rem;
+            overflow: hidden;
+        }
+
+        #rain-canvas {
+            position: absolute; inset: 0;
+            pointer-events: none; opacity: 0.3;
+        }
+
+        .hero-orb {
+            position: absolute; border-radius: 50%;
+            pointer-events: none; filter: blur(80px);
+        }
+        .hero-orb-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(200,160,224,0.14) 0%, transparent 70%);
+            top: 20%; left: 50%; transform: translateX(-50%);
+        }
+        .hero-orb-2 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(244,168,192,0.10) 0%, transparent 70%);
+            top: 60%; right: 15%;
+        }
+        .hero-orb-3 {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(168,190,244,0.10) 0%, transparent 70%);
+            top: 30%; left: 8%;
+        }
+
+        .hero-inner { position: relative; z-index: 2; }
+
+        .hero-pill {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 0.45rem 1.4rem; margin-bottom: 2.2rem;
+            border: 1px solid var(--border); border-radius: 999px;
+            background: var(--glass); backdrop-filter: blur(10px);
+            font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+        }
+        .hero-pill .dot {
+            width: 5px; height: 5px; border-radius: 50%;
+            background: var(--pink); animation: pulse 2s ease-in-out infinite;
+        }
+
+        .hero-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(5.5rem, 15vw, 12rem);
+            font-weight: 700; line-height: 0.95;
+            background: var(--grad);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 60px rgba(200,160,224,0.25));
+            animation: float 5s ease-in-out infinite;
+            margin-bottom: 0.6rem;
+        }
+
+        .hero-tagline {
+            font-size: clamp(0.65rem, 1.3vw, 0.82rem);
+            letter-spacing: 0.45em; text-transform: uppercase;
+            color: var(--dim); margin-bottom: 2rem;
+        }
+
+        .hero-quote {
+            max-width: 540px; margin: 0 auto 3rem;
+            font-family: 'Cormorant Garamond', serif; font-style: italic;
+            font-size: clamp(1rem, 2vw, 1.2rem); line-height: 1.85; color: var(--dim);
+        }
+        .hero-quote strong { color: var(--text); font-style: normal; font-weight: 400; }
+
+        .hero-btns {
+            display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+            margin-bottom: 5rem;
+        }
+
+        /* ─── BUTTONS ────────────────────────────────── */
+        .btn-primary {
+            display: inline-block; text-decoration: none;
+            padding: 0.9rem 2.4rem; border-radius: 999px;
+            background: var(--grad); color: #18081a;
+            font-weight: 600; font-size: 0.88rem; letter-spacing: 0.06em;
+            border: none; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(200,160,224,0.35);
+        }
+        .btn-ghost {
+            display: inline-block; text-decoration: none;
+            padding: 0.9rem 2.4rem; border-radius: 999px;
+            border: 1px solid var(--border); background: var(--glass);
+            color: var(--text); font-size: 0.88rem; letter-spacing: 0.06em;
+            cursor: pointer; backdrop-filter: blur(8px);
+            transition: transform 0.3s, border-color 0.3s, background 0.3s;
+        }
+        .btn-ghost:hover {
+            transform: translateY(-3px);
+            border-color: var(--purple); background: rgba(200,160,224,0.07);
+        }
+
+        /* ─── HERO STATS ─────────────────────────────── */
+        .hero-stats {
+            position: relative; z-index: 2;
+            display: flex; justify-content: center; gap: 4.5rem;
+        }
+        .h-stat-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.6rem; font-weight: 300; line-height: 1;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; margin-bottom: 0.35rem;
+        }
+        .h-stat-lbl {
+            font-size: 0.65rem; letter-spacing: 0.22em;
+            text-transform: uppercase; color: var(--dim);
+        }
+
+        /* ─── MARQUEE ─────────────────────────────────── */
+        .marquee-wrap {
+            overflow: hidden; padding: 1.6rem 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .marquee-track {
+            display: flex; gap: 2.5rem; width: max-content;
+            animation: marquee 30s linear infinite;
+        }
+        .marquee-track:hover { animation-play-state: paused; }
+        .m-item {
+            display: flex; align-items: center; gap: 1rem;
+            font-family: 'Cormorant Garamond', serif; font-style: italic;
+            font-size: 1.1rem; color: var(--dim); white-space: nowrap;
+        }
+        .m-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
+
+        /* ─── SECTION COMMON ──────────────────────────── */
+        .section-wrap {
+            max-width: 1180px; margin: 0 auto; padding: 7rem 2rem;
+        }
+        .s-label {
+            display: flex; align-items: center; gap: 1rem;
+            font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase;
+            color: var(--purple); margin-bottom: 1.2rem;
+        }
+        .s-label::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+        .s-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 300; line-height: 1.15;
+            margin-bottom: 1.5rem;
+        }
+        .s-title em {
+            font-style: italic;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── ABOUT ────────────────────────────────────── */
+        #about-inner {
+            display: grid; grid-template-columns: 1fr 1.1fr; gap: 5rem; align-items: center;
+        }
+
+        .about-card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 2rem; padding: 3.5rem 2.5rem; text-align: center;
+            backdrop-filter: blur(16px); position: relative; overflow: hidden;
+        }
+        .about-card::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 0%, rgba(200,160,224,0.09) 0%, transparent 65%);
+            pointer-events: none;
+        }
+        .about-card-logo {
+            font-family: 'Dancing Script', cursive; font-size: 4.5rem; font-weight: 700;
+            background: var(--grad);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; line-height: 1; margin-bottom: 0.8rem;
+            filter: drop-shadow(0 0 24px rgba(200,160,224,0.35));
+        }
+        .about-card-sub {
+            font-size: 0.62rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--dim);
+            margin-bottom: 2rem;
+        }
+        .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; }
+        .tag {
+            padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.73rem;
+            border: 1px solid var(--border); color: var(--dim); background: var(--glass);
+        }
+        .tag.hl { border-color: rgba(200,160,224,0.3); color: var(--purple); }
+
+        .about-body p {
+            font-size: 1.05rem; line-height: 1.9; color: var(--dim); margin-bottom: 1.4rem;
+        }
+        .about-body p strong { color: var(--text); font-weight: 500; }
+
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 2rem; }
+        .feature-item {
+            display: flex; align-items: flex-start; gap: 0.8rem;
+            padding: 1rem 1.1rem; background: var(--glass);
+            border: 1px solid var(--border); border-radius: 1rem; backdrop-filter: blur(8px);
+            transition: border-color 0.3s;
+        }
+        .feature-item:hover { border-color: var(--border-hover); }
+        .fi-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: 0.1rem; }
+        .fi-text { font-size: 0.83rem; color: var(--dim); line-height: 1.5; }
+        .fi-text strong { display: block; color: var(--text); font-weight: 500; margin-bottom: 0.15rem; font-size: 0.88rem; }
+
+        /* ─── ARTISTS ──────────────────────────────────── */
+        .artists-header { text-align: center; margin-bottom: 3.5rem; }
+        .artists-header p { color: var(--dim); font-size: 0.95rem; max-width: 480px; margin: 0 auto; }
+
+        .artists-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem;
+        }
+
+        .a-card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 1.5rem; padding: 2.4rem; backdrop-filter: blur(14px);
+            position: relative; overflow: hidden;
+            transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s, box-shadow 0.4s;
+        }
+        .a-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--grad); opacity: 0; transition: opacity 0.4s;
+        }
+        .a-card:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-hover);
+            box-shadow: 0 24px 70px rgba(0,0,0,0.35);
+        }
+        .a-card:hover::after { opacity: 1; }
+        .a-card.dashed {
+            border-style: dashed; cursor: pointer; border-color: rgba(255,255,255,0.06);
+        }
+
+        .a-avatar {
+            width: 68px; height: 68px; border-radius: 50%;
+            background: var(--grad);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Dancing Script', cursive; font-size: 1.7rem; font-weight: 700;
+            color: #18081a; margin-bottom: 1.5rem; position: relative; flex-shrink: 0;
+        }
+        .a-avatar::before {
+            content: ''; position: absolute; inset: -3px; border-radius: 50%;
+            background: var(--grad); z-index: -1; opacity: 0.3; filter: blur(8px);
+        }
+        .a-avatar.ghost {
+            background: var(--glass); border: 1px dashed var(--border);
+            color: var(--dim); -webkit-text-fill-color: var(--dim);
+        }
+
+        .a-name { font-family: 'Cormorant Garamond', serif; font-size: 1.75rem; font-weight: 400; margin-bottom: 0.25rem; }
+        .a-handle { font-size: 0.78rem; color: var(--purple); letter-spacing: 0.04em; margin-bottom: 1rem; }
+
+        .a-roles { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-bottom: 1.2rem; }
+        .role {
+            padding: 0.22rem 0.8rem; border-radius: 999px; font-size: 0.68rem; letter-spacing: 0.04em;
+            background: rgba(200,160,224,0.08); color: var(--purple); border: 1px solid rgba(200,160,224,0.18);
+        }
+
+        .a-bio { font-size: 0.87rem; line-height: 1.75; color: var(--dim); margin-bottom: 1.5rem; }
+
+        .a-stats {
+            display: flex; gap: 1.8rem; padding-top: 1.4rem; border-top: 1px solid var(--border);
+        }
+        .a-stat-num {
+            font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 300;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            line-height: 1; margin-bottom: 0.2rem;
+        }
+        .a-stat-lbl { font-size: 0.62rem; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; }
+
+        .a-socials { display: flex; gap: 0.65rem; margin-top: 1.4rem; }
+        .s-icon {
+            width: 34px; height: 34px; border-radius: 50%;
+            border: 1px solid var(--border); background: var(--glass);
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; color: var(--dim);
+            transition: border-color 0.3s, color 0.3s; flex-shrink: 0;
+        }
+        .s-icon:hover { border-color: var(--purple); color: var(--purple); }
+        .s-icon svg { width: 14px; height: 14px; }
+
+        /* ─── EVENTS ────────────────────────────────────── */
+        .events-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+
+        .e-info {}
+        .collab-pill {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1.2rem; border: 1px solid var(--border); border-radius: 999px;
+            background: var(--glass); font-size: 0.78rem; color: var(--dim); margin-bottom: 1rem;
+        }
+        .collab-pill strong { color: var(--gold); }
+
+        .e-text { font-size: 1rem; line-height: 1.85; color: var(--dim); margin-bottom: 1.4rem; }
+
+        .e-card {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 1.5rem; overflow: hidden; backdrop-filter: blur(14px);
+            transition: transform 0.4s, border-color 0.4s;
+        }
+        .e-card:hover { transform: translateY(-4px); border-color: var(--border-hover); }
+        .e-card + .e-card { margin-top: 1.1rem; }
+
+        .e-card-head {
+            padding: 1.8rem 2rem;
+            background: linear-gradient(135deg, rgba(200,160,224,0.07) 0%, rgba(244,168,192,0.07) 100%);
+            border-bottom: 1px solid var(--border);
+        }
+        .e-type { font-size: 0.63rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--pink); margin-bottom: 0.6rem; }
+        .e-name { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 400; }
+
+        .e-card-body { padding: 1.8rem 2rem; }
+        .e-desc { font-size: 0.88rem; line-height: 1.75; color: var(--dim); margin-bottom: 1.4rem; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+        .chip {
+            display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.85rem;
+            border-radius: 999px; background: var(--glass);
+            border: 1px solid var(--border); font-size: 0.72rem; color: var(--dim);
+        }
+
+        /* ─── JOIN ───────────────────────────────────────── */
+        #join-inner {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: 2rem; padding: 5.5rem 3.5rem; text-align: center;
+            backdrop-filter: blur(20px); position: relative; overflow: hidden;
+        }
+        #join-inner::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% -10%, rgba(200,160,224,0.1) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .join-sub {
+            max-width: 500px; margin: 0 auto 3rem;
+            font-family: 'Cormorant Garamond', serif; font-style: italic;
+            font-size: 1.15rem; line-height: 1.8; color: var(--dim);
+        }
+        .join-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        /* ─── FOOTER ─────────────────────────────────────── */
+        footer {
+            padding: 2.5rem 3.5rem 2rem;
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+        }
+        .f-logo {
+            font-family: 'Dancing Script', cursive; font-size: 1.5rem; font-weight: 700;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            text-decoration: none;
+        }
+        .f-tagline { font-size: 0.8rem; color: var(--dim); }
+        .f-links { display: flex; gap: 1.6rem; }
+        .f-links a { font-size: 0.78rem; color: var(--dim); text-decoration: none; transition: color 0.3s; }
+        .f-links a:hover { color: var(--text); }
+
+        /* ─── ANIMATIONS ─────────────────────────────────── */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-12px); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.7); }
+        }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(32px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes sparkleAnim {
+            0%  { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(160deg); }
+            100%{ opacity: 0; transform: scale(0) rotate(320deg); }
+        }
+
+        .reveal {
+            opacity: 0; transform: translateY(28px);
+            transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1), transform 0.85s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal.vis { opacity: 1; transform: translateY(0); }
+        .reveal-d1 { transition-delay: 0.1s; }
+        .reveal-d2 { transition-delay: 0.2s; }
+        .reveal-d3 { transition-delay: 0.3s; }
+        .reveal-d4 { transition-delay: 0.45s; }
+
+        /* ─── RESPONSIVE ─────────────────────────────────── */
+        @media (max-width: 900px) {
+            nav { padding: 1.1rem 1.5rem; }
+            .nav-links { display: none; }
+            .nav-hamburger { display: flex; }
+
+            #about-inner { grid-template-columns: 1fr; gap: 3rem; }
+            .artists-grid { grid-template-columns: 1fr; }
+            .events-layout { grid-template-columns: 1fr; gap: 3rem; }
+            #join-inner { padding: 3.5rem 1.8rem; }
+            .hero-stats { gap: 2.5rem; }
+            footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .artists-grid { grid-template-columns: 1fr; }
+            .hero-btns { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────── -->
+<nav id="mainNav">
+    <a href="#hero" class="nav-logo">Petrichor</a>
+    <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#artists">Artists</a></li>
+        <li><a href="#events">Events</a></li>
+        <li><a href="#join" class="nav-cta">Join Us</a></li>
+    </ul>
+    <div class="nav-hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </div>
+</nav>
+
+<!-- Mobile nav overlay -->
+<div id="mobileNav" style="
+    display:none; position:fixed; inset:0; z-index:490;
+    background:rgba(6,6,14,0.96); backdrop-filter:blur(20px);
+    flex-direction:column; align-items:center; justify-content:center; gap:2.5rem;
+">
+    <a href="#about" class="m-nav-link" style="font-size:2rem;font-family:'Cormorant Garamond',serif;color:var(--dim);text-decoration:none;">About</a>
+    <a href="#artists" class="m-nav-link" style="font-size:2rem;font-family:'Cormorant Garamond',serif;color:var(--dim);text-decoration:none;">Artists</a>
+    <a href="#events" class="m-nav-link" style="font-size:2rem;font-family:'Cormorant Garamond',serif;color:var(--dim);text-decoration:none;">Events</a>
+    <a href="#join" class="m-nav-link btn-primary" style="font-size:1rem;">Join Us</a>
+</div>
+
+<!-- ─── HERO ──────────────────────────────────────────── -->
+<section id="hero">
+    <canvas id="rain-canvas"></canvas>
+    <div class="hero-orb hero-orb-1"></div>
+    <div class="hero-orb hero-orb-2"></div>
+    <div class="hero-orb hero-orb-3"></div>
+
+    <div class="hero-inner">
+        <div class="hero-pill">
+            <div class="dot"></div>
+            Get2gether × Petrichor &nbsp;·&nbsp; Community Collaboration
+        </div>
+
+        <h1 class="hero-title">Petrichor</h1>
+        <p class="hero-tagline">Mellow Out With Us</p>
+
+        <p class="hero-quote">
+            Some artists just need <strong>one stage</strong>, one opportunity,
+            one community that <strong>truly sees them.</strong>
+            Music, art &amp; real conversations — this is that space.
+        </p>
+
+        <div class="hero-btns">
+            <a href="#join" class="btn-primary">Join the Community</a>
+            <a href="#events" class="btn-ghost">Upcoming Events</a>
+        </div>
+
+        <div class="hero-stats">
+            <div class="h-stat">
+                <div class="h-stat-num">42+</div>
+                <div class="h-stat-lbl">Members</div>
+            </div>
+            <div class="h-stat">
+                <div class="h-stat-num">∞</div>
+                <div class="h-stat-lbl">Stories</div>
+            </div>
+            <div class="h-stat">
+                <div class="h-stat-num">1</div>
+                <div class="h-stat-lbl">Stage</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ─── MARQUEE ────────────────────────────────────────── -->
+<div class="marquee-wrap">
+    <div class="marquee-track">
+        <!-- First set -->
+        <div class="m-item">Singer <span class="m-dot"></span></div>
+        <div class="m-item">Story Teller <span class="m-dot"></span></div>
+        <div class="m-item">Musician <span class="m-dot"></span></div>
+        <div class="m-item">Digital Creator <span class="m-dot"></span></div>
+        <div class="m-item">Indie Artist <span class="m-dot"></span></div>
+        <div class="m-item">Stand Up Comic <span class="m-dot"></span></div>
+        <div class="m-item">Band <span class="m-dot"></span></div>
+        <div class="m-item">Performer <span class="m-dot"></span></div>
+        <div class="m-item">Model <span class="m-dot"></span></div>
+        <div class="m-item">Mental Health Advocate <span class="m-dot"></span></div>
+        <!-- Duplicate for infinite scroll -->
+        <div class="m-item">Singer <span class="m-dot"></span></div>
+        <div class="m-item">Story Teller <span class="m-dot"></span></div>
+        <div class="m-item">Musician <span class="m-dot"></span></div>
+        <div class="m-item">Digital Creator <span class="m-dot"></span></div>
+        <div class="m-item">Indie Artist <span class="m-dot"></span></div>
+        <div class="m-item">Stand Up Comic <span class="m-dot"></span></div>
+        <div class="m-item">Band <span class="m-dot"></span></div>
+        <div class="m-item">Performer <span class="m-dot"></span></div>
+        <div class="m-item">Model <span class="m-dot"></span></div>
+        <div class="m-item">Mental Health Advocate <span class="m-dot"></span></div>
+    </div>
+</div>
+
+<!-- ─── ABOUT ─────────────────────────────────────────── -->
+<div class="section-wrap">
+    <div id="about-inner">
+        <!-- Visual -->
+        <div class="reveal">
+            <div class="about-card">
+                <div class="about-card-logo">Petrichor</div>
+                <p class="about-card-sub">Mellow Out With Us</p>
+                <div class="tag-cloud">
+                    <span class="tag hl">Music</span>
+                    <span class="tag hl">Art</span>
+                    <span class="tag hl">Mental Health</span>
+                    <span class="tag">Live Shows</span>
+                    <span class="tag">Open Mics</span>
+                    <span class="tag">Collaborations</span>
+                    <span class="tag">Community</span>
+                    <span class="tag">Real Conversations</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text -->
+        <div class="about-body">
+            <div class="s-label" id="about">Our Story</div>
+            <h2 class="s-title reveal">Breaking silence <em>with art</em><br>& real conversations</h2>
+
+            <p class="reveal reveal-d1">
+                Some artists just need <strong>one stage</strong> — one opportunity, one community
+                that truly sees them. Petrichor was born from that belief: a safe, creative space
+                where vulnerability meets artistry.
+            </p>
+            <p class="reveal reveal-d2">
+                We exist at the intersection of <strong>music, art, and mental wellness.</strong>
+                From live shows and open mics to creative collaborations and community experiences —
+                this is a space for people who <strong>create from the heart.</strong>
+            </p>
+
+            <div class="feature-grid reveal reveal-d3">
+                <div class="feature-item">
+                    <div class="fi-icon">🎵</div>
+                    <div class="fi-text"><strong>Live Performances</strong>Open stages for every form of expression</div>
+                </div>
+                <div class="feature-item">
+                    <div class="fi-icon">🧠</div>
+                    <div class="fi-text"><strong>Mental Health</strong>Real conversations &amp; genuine support</div>
+                </div>
+                <div class="feature-item">
+                    <div class="fi-icon">🤝</div>
+                    <div class="fi-text"><strong>Collaborations</strong>Connect with fellow creatives</div>
+                </div>
+                <div class="feature-item">
+                    <div class="fi-icon">✨</div>
+                    <div class="fi-text"><strong>Growth</strong>From emerging to established</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── ARTISTS ───────────────────────────────────────── -->
+<div class="section-wrap" id="artists">
+    <div class="artists-header reveal">
+        <div class="s-label" style="justify-content:center;">Featured Artists</div>
+        <h2 class="s-title">The voices behind <em>Petrichor</em></h2>
+        <p>People with passion, creativity, and a story to tell — the heartbeat of our community.</p>
+    </div>
+
+    <div class="artists-grid">
+
+        <!-- Kiya -->
+        <div class="a-card reveal reveal-d1">
+            <div class="a-avatar">K</div>
+            <h3 class="a-name">Kiya</h3>
+            <p class="a-handle">@itsyour.kiya</p>
+            <div class="a-roles">
+                <span class="role">Singer</span>
+                <span class="role">Model</span>
+                <span class="role">Digital Creator</span>
+                <span class="role">Mental Health</span>
+                <span class="role">CHRI'27</span>
+            </div>
+            <p class="a-bio">
+                Creating with purpose — Kiya is a multifaceted singer, model, and digital creator
+                with a deep commitment to mental health awareness. As a CHRI'27 alumna and founder,
+                she channels authenticity and passion into every performance and post.
+            </p>
+            <div class="a-stats">
+                <div>
+                    <div class="a-stat-num">558</div>
+                    <div class="a-stat-lbl">Followers</div>
+                </div>
+                <div>
+                    <div class="a-stat-num">56</div>
+                    <div class="a-stat-lbl">Posts</div>
+                </div>
+                <div>
+                    <div class="a-stat-num">YT</div>
+                    <div class="a-stat-lbl">Channel</div>
+                </div>
+            </div>
+            <div class="a-socials">
+                <a href="https://www.instagram.com/itsyour.kiya" target="_blank" rel="noopener" class="s-icon" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+                <a href="https://youtube.com/@kiyaofficial2026" target="_blank" rel="noopener" class="s-icon" title="YouTube">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- Petrichor Community -->
+        <div class="a-card reveal reveal-d2">
+            <div class="a-avatar" style="background:linear-gradient(135deg,#f9c6d3,#c8a0e0);">P</div>
+            <h3 class="a-name">Petrichor.live</h3>
+            <p class="a-handle">@petrichor.live</p>
+            <div class="a-roles">
+                <span class="role">Community</span>
+                <span class="role">Music</span>
+                <span class="role">Mental Health</span>
+                <span class="role">Art</span>
+            </div>
+            <p class="a-bio">
+                Breaking silence on mental health through music, art, and real conversations.
+                A community platform that hosts open mics, live shows, and collaborative
+                spaces — where every voice deserves to be heard and every story matters.
+            </p>
+            <div class="a-stats">
+                <div>
+                    <div class="a-stat-num">42</div>
+                    <div class="a-stat-lbl">Followers</div>
+                </div>
+                <div>
+                    <div class="a-stat-num">G2G</div>
+                    <div class="a-stat-lbl">Partner</div>
+                </div>
+                <div>
+                    <div class="a-stat-num">∞</div>
+                    <div class="a-stat-lbl">Heart</div>
+                </div>
+            </div>
+            <div class="a-socials">
+                <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener" class="s-icon" title="Instagram">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <!-- You? -->
+        <div class="a-card dashed reveal reveal-d3" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1','_blank')" style="cursor:pointer">
+            <div class="a-avatar ghost">+</div>
+            <h3 class="a-name" style="color:var(--dim);">Your Name Here</h3>
+            <p class="a-handle">Your Stage Awaits</p>
+            <div class="a-roles">
+                <span class="role" style="opacity:.6;">Singer?</span>
+                <span class="role" style="opacity:.6;">Artist?</span>
+                <span class="role" style="opacity:.6;">Creator?</span>
+                <span class="role" style="opacity:.6;">You?</span>
+            </div>
+            <p class="a-bio">
+                If you have passion, creativity, and a story to tell — we'd love to know you.
+                Every iconic artist started somewhere. Petrichor might just be your somewhere.
+            </p>
+            <div style="margin-top:1.5rem;">
+                <span class="btn-primary" style="font-size:0.82rem;padding:0.7rem 1.6rem;">Fill the Form →</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ─── EVENTS ────────────────────────────────────────── -->
+<div class="section-wrap" id="events">
+    <div class="events-layout">
+
+        <div class="e-info">
+            <div class="s-label">Events</div>
+            <h2 class="s-title reveal">Your moment.<br><em>Your stage.</em></h2>
+
+            <div class="collab-pill reveal reveal-d1">
+                🤝 &nbsp;<strong>Get2gether</strong>&nbsp; × Petrichor Collaboration
+            </div>
+
+            <p class="e-text reveal reveal-d2">
+                We host open mics and live shows where every form of expression is welcome.
+                From intimate storytelling to electric band performances — Petrichor creates
+                the space, you create the magic.
+            </p>
+            <p class="e-text reveal reveal-d3">
+                <em>"Express. Inspire. Connect. Come perform or just come enjoy."</em>
+            </p>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1" target="_blank" rel="noopener" class="btn-primary reveal reveal-d4">Apply to Perform ✦</a>
+        </div>
+
+        <div>
+            <div class="e-card reveal reveal-d1">
+                <div class="e-card-head">
+                    <div class="e-type">Flagship Event</div>
+                    <h3 class="e-name">Open Mic Night</h3>
+                </div>
+                <div class="e-card-body">
+                    <p class="e-desc">
+                        One stage. Many stories. Our open mic nights are where emerging artists find
+                        their voice, connect with audiences, and discover their people.
+                        Be heard. Be you. We're here.
+                    </p>
+                    <p style="font-size:0.68rem;color:var(--dim);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:0.9rem;">Perform In Any Form</p>
+                    <div class="chips">
+                        <span class="chip">🎤 Singer</span>
+                        <span class="chip">📖 Story Teller</span>
+                        <span class="chip">🎸 Band</span>
+                        <span class="chip">🎨 Indie Artist</span>
+                        <span class="chip">😂 Stand Up Comedy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="e-card reveal reveal-d2">
+                <div class="e-card-head" style="background:linear-gradient(135deg,rgba(240,204,120,0.07)0%,rgba(244,168,192,0.07)100%);">
+                    <div class="e-type" style="color:var(--gold);">Community Experience</div>
+                    <h3 class="e-name">Artist Collaborations</h3>
+                </div>
+                <div class="e-card-body">
+                    <p class="e-desc">
+                        Beyond the stage — creative sessions, workshops, and community gatherings
+                        where artists grow together. Build the connections that outlast the night.
+                    </p>
+                    <div class="chips">
+                        <span class="chip">🎼 Jam Sessions</span>
+                        <span class="chip">🧘 Wellness Talks</span>
+                        <span class="chip">🤝 Networking</span>
+                        <span class="chip">🌧️ Community</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ─── JOIN ──────────────────────────────────────────── -->
+<div class="section-wrap" id="join">
+    <div id="join-inner" class="reveal">
+        <div class="s-label" style="justify-content:center;margin-bottom:1.5rem;">Get Involved</div>
+        <h2 class="s-title">Ready to find your <em>community?</em></h2>
+        <p class="join-sub">
+            "If you're someone with passion, creativity, and a story to tell —
+            we'd love to know you better." 🌧️✨
+        </p>
+        <div class="join-btns">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1" target="_blank" rel="noopener" class="btn-primary">
+                Fill the Artist Form ✦
+            </a>
+            <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener" class="btn-ghost">
+                Follow @petrichor.live
+            </a>
+            <a href="https://www.instagram.com/itsyour.kiya" target="_blank" rel="noopener" class="btn-ghost">
+                Connect with Kiya
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ─── FOOTER ────────────────────────────────────────── -->
+<footer>
+    <a href="#hero" class="f-logo">Petrichor</a>
+    <p class="f-tagline">Breaking silence on mental health, one stage at a time. 🌧️✨</p>
+    <div class="f-links">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1" target="_blank" rel="noopener">Join Form</a>
+        <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener">Instagram</a>
+        <a href="#about">About</a>
+        <a href="#artists">Artists</a>
+        <a href="#events">Events</a>
+    </div>
+</footer>
+
+<script>
+// ─── RAIN CANVAS ──────────────────────────────────────────
+const canvas = document.getElementById('rain-canvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+const colors = ['rgba(200,160,224,', 'rgba(244,168,192,', 'rgba(168,190,244,'];
+
+const drops = Array.from({ length: 140 }, () => ({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    len: Math.random() * 22 + 7,
+    speed: Math.random() * 2.5 + 1.2,
+    opacity: Math.random() * 0.55 + 0.08,
+    width: Math.random() * 0.7 + 0.2,
+    color: colors[Math.floor(Math.random() * colors.length)],
+}));
+
+function drawRain() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drops.forEach(d => {
+        const g = ctx.createLinearGradient(d.x, d.y, d.x - 0.8, d.y + d.len);
+        g.addColorStop(0, d.color + '0)');
+        g.addColorStop(0.5, d.color + d.opacity + ')');
+        g.addColorStop(1, d.color + '0)');
+        ctx.beginPath();
+        ctx.strokeStyle = g;
+        ctx.lineWidth = d.width;
+        ctx.moveTo(d.x, d.y);
+        ctx.lineTo(d.x - 0.8, d.y + d.len);
+        ctx.stroke();
+        d.y += d.speed;
+        d.x -= d.speed * 0.25;
+        if (d.y > canvas.height + 30) { d.y = -30; d.x = Math.random() * canvas.width; }
+        if (d.x < -10) { d.x = canvas.width + 10; }
+    });
+    requestAnimationFrame(drawRain);
+}
+drawRain();
+
+// ─── SCROLL REVEAL ───────────────────────────────────────
+const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ─── NAV SCROLL ──────────────────────────────────────────
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ─── MOBILE NAV ──────────────────────────────────────────
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+
+hamburger.addEventListener('click', () => {
+    const open = mobileNav.style.display === 'flex';
+    mobileNav.style.display = open ? 'none' : 'flex';
+    hamburger.querySelectorAll('span')[0].style.transform = open ? '' : 'translateY(6.5px) rotate(45deg)';
+    hamburger.querySelectorAll('span')[1].style.opacity = open ? '' : '0';
+    hamburger.querySelectorAll('span')[2].style.transform = open ? '' : 'translateY(-6.5px) rotate(-45deg)';
+});
+
+mobileNav.querySelectorAll('.m-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+        mobileNav.style.display = 'none';
+        hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    });
+});
+
+// ─── SPARKLE TRAIL ──────────────────────────────────────
+const sparkleChars = ['✦', '✧', '⋆', '·', '✺', '⁺'];
+const sparkleColors = ['#f4a8c0','#c8a0e0','#a8bef4','#f0cc78'];
+let lastSparkle = 0;
+
+document.addEventListener('mousemove', (e) => {
+    if (Date.now() - lastSparkle < 80) return;
+    if (Math.random() > 0.88) {
+        lastSparkle = Date.now();
+        const el = document.createElement('div');
+        el.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
+        const size = Math.random() * 10 + 7;
+        el.style.cssText = `
+            position:fixed;
+            left:${e.clientX + (Math.random()-0.5)*18}px;
+            top:${e.clientY + (Math.random()-0.5)*18}px;
+            font-size:${size}px;
+            color:${sparkleColors[Math.floor(Math.random()*sparkleColors.length)]};
+            pointer-events:none; z-index:9998;
+            animation: sparkleAnim 0.9s ease-in-out forwards;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 900);
+    }
+}, { passive: true });
+
+// Inject sparkle keyframes dynamically
+const style = document.createElement('style');
+style.textContent = `
+@keyframes sparkleAnim {
+    0%  { opacity:0; transform: scale(0) rotate(0deg) translateY(0); }
+    40% { opacity:1; transform: scale(1) rotate(120deg) translateY(-8px); }
+    100%{ opacity:0; transform: scale(0.2) rotate(240deg) translateY(-20px); }
+}`;
+document.head.appendChild(style);
+
+// ─── SMOOTH ANCHOR SCROLL ───────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+</script>
+</body>
+</html>
