@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Petrichor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #06060e;
+            --bg2: #0c0c18;
+            --text: #f0ece8;
+            --dim: rgba(240,236,232,0.55);
+            --purple: #c8a0e0;
+            --teal: #6ec9b8;
+            --error: #f4a8a8;
+            --grad: linear-gradient(135deg,#f9c6d3 0%,#e8b0e8 35%,#a8bef4 68%,#f5d6a0 100%);
+            --glass: rgba(255,255,255,0.035);
+            --border: rgba(255,255,255,0.07);
+        }
+        body {
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .panel {
+            width: 100%;
+            max-width: 480px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            backdrop-filter: blur(16px);
+        }
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 0.35rem;
+        }
+        .sub {
+            color: var(--dim);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+        label {
+            display: block;
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--dim);
+            margin-bottom: 0.5rem;
+        }
+        input[type="password"],
+        input[type="file"] {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+        }
+        input[type="file"] { padding: 0.65rem 1rem; }
+        input:focus {
+            outline: 2px solid var(--teal);
+            outline-offset: 2px;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.9rem 1.5rem;
+            border: none;
+            border-radius: 999px;
+            background: var(--grad);
+            color: #18081a;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-height: 44px;
+        }
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(200,160,224,0.3);
+        }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            margin-top: 0.75rem;
+        }
+        .msg {
+            padding: 0.85rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.88rem;
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+        .msg.error {
+            display: block;
+            background: rgba(244,168,168,0.1);
+            border: 1px solid rgba(244,168,168,0.25);
+            color: var(--error);
+        }
+        .msg.success {
+            display: block;
+            background: rgba(110,201,184,0.1);
+            border: 1px solid rgba(110,201,184,0.25);
+            color: var(--teal);
+        }
+        .preview {
+            margin: 1rem 0 1.25rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            display: none;
+        }
+        .preview img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+        }
+        .preview-label {
+            font-size: 0.72rem;
+            color: var(--dim);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+        .hidden { display: none !important; }
+        .back {
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: var(--dim);
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        .back:hover { color: var(--text); }
+        .attempts {
+            font-size: 0.8rem;
+            color: var(--dim);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Petrichor Admin</h1>
+        <p class="sub">Manage event poster uploads</p>
+
+        <div id="message" class="msg" role="alert"></div>
+
+        <!-- Login -->
+        <form id="loginForm">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+            <p id="attemptsInfo" class="attempts"></p>
+            <button type="submit" class="btn" id="loginBtn">Sign In</button>
+        </form>
+
+        <!-- Upload (shown after login) -->
+        <div id="uploadSection" class="hidden">
+            <p class="preview-label">Current poster</p>
+            <div class="preview" id="currentPreview" style="display:block">
+                <img id="currentPoster" src="" alt="Current event poster">
+            </div>
+
+            <form id="uploadForm">
+                <label for="poster">Upload new event poster</label>
+                <input type="file" id="poster" name="poster" accept="image/jpeg,image/png,image/webp" required>
+
+                <div class="preview" id="newPreview">
+                    <img id="newPosterPreview" src="" alt="New poster preview">
+                </div>
+
+                <button type="submit" class="btn" id="uploadBtn">Upload Poster</button>
+            </form>
+
+            <button type="button" class="btn btn-ghost" id="logoutBtn">Sign Out</button>
+        </div>
+
+        <a href="/" class="back">← Back to site</a>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const uploadSection = document.getElementById('uploadSection');
+        const messageEl = document.getElementById('message');
+        const attemptsInfo = document.getElementById('attemptsInfo');
+        const loginBtn = document.getElementById('loginBtn');
+        const uploadForm = document.getElementById('uploadForm');
+        const posterInput = document.getElementById('poster');
+        const currentPoster = document.getElementById('currentPoster');
+        const newPreview = document.getElementById('newPreview');
+        const newPosterPreview = document.getElementById('newPosterPreview');
+
+        function showMessage(text, type) {
+            messageEl.textContent = text;
+            messageEl.className = `msg ${type}`;
+        }
+
+        function clearMessage() {
+            messageEl.className = 'msg';
+            messageEl.textContent = '';
+        }
+
+        async function loadStatus() {
+            const res = await fetch('/api/admin/status');
+            const data = await res.json();
+
+            if (data.locked) {
+                loginBtn.disabled = true;
+                attemptsInfo.textContent = `Locked — try again in ${data.lockMinutesLeft} minute(s).`;
+                showMessage(`Too many failed attempts. Try again in ${data.lockMinutesLeft} minute(s).`, 'error');
+                return;
+            }
+
+            attemptsInfo.textContent = `${data.remainingAttempts} login attempt(s) remaining.`;
+
+            if (data.authenticated) {
+                loginForm.classList.add('hidden');
+                uploadSection.classList.remove('hidden');
+                if (data.currentPoster) {
+                    currentPoster.src = `/${data.currentPoster}`;
+                }
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage();
+            loginBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: document.getElementById('password').value }),
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    showMessage(data.error || 'Login failed', 'error');
+                    await loadStatus();
+                    return;
+                }
+
+                showMessage('Signed in successfully.', 'success');
+                loginForm.classList.add('hidden');
+                uploadSection.classList.remove('hidden');
+                await loadStatus();
+            } catch {
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                loginBtn.disabled = false;
+            }
+        });
+
+        posterInput.addEventListener('change', () => {
+            const file = posterInput.files[0];
+            if (!file) {
+                newPreview.style.display = 'none';
+                return;
+            }
+            const url = URL.createObjectURL(file);
+            newPosterPreview.src = url;
+            newPreview.style.display = 'block';
+        });
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage();
+
+            const file = posterInput.files[0];
+            if (!file) return;
+
+            const uploadBtn = document.getElementById('uploadBtn');
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'Uploading…';
+
+            const formData = new FormData();
+            formData.append('poster', file);
+
+            try {
+                const res = await fetch('/api/admin/upload-poster', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    showMessage(data.error || 'Upload failed', 'error');
+                    return;
+                }
+
+                currentPoster.src = `/${data.eventPoster}`;
+                posterInput.value = '';
+                newPreview.style.display = 'none';
+                showMessage('Event poster updated successfully!', 'success');
+            } catch {
+                showMessage('Network error. Please try again.', 'error');
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Upload Poster';
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await fetch('/api/admin/logout', { method: 'POST' });
+            uploadSection.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            document.getElementById('password').value = '';
+            clearMessage();
+            await loadStatus();
+        });
+
+        loadStatus();
+    </script>
+</body>
+</html>

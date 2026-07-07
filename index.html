@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Petrichor — a community where music, art, and mental health come together. Join open mics, live shows, and creative collaborations.">
+    <meta name="theme-color" content="#06060e">
     <title>Petrichor — Mellow Out With Us</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,18 +15,42 @@
         :root {
             --bg:           #06060e;
             --bg2:          #0c0c18;
+            --bg3:          #10101f;
             --pink:         #f4a8c0;
             --purple:       #c8a0e0;
             --lavender:     #a8bef4;
             --gold:         #f0cc78;
+            --teal:         #6ec9b8;
+            --teal-dim:     rgba(110,201,184,0.15);
             --text:         #f0ece8;
             --dim:          rgba(240,236,232,0.55);
             --grad:         linear-gradient(135deg,#f9c6d3 0%,#e8b0e8 35%,#a8bef4 68%,#f5d6a0 100%);
             --grad-text:    linear-gradient(120deg,#f9c6d3,#d8a8e8,#a8bef4,#f4c878);
+            --grad-subtle:  linear-gradient(90deg, transparent, rgba(200,160,224,0.35), rgba(110,201,184,0.25), transparent);
             --glass:        rgba(255,255,255,0.035);
             --glass-md:     rgba(255,255,255,0.06);
             --border:       rgba(255,255,255,0.07);
             --border-hover: rgba(200,160,224,0.25);
+            --space-xs:     0.5rem;
+            --space-sm:     1rem;
+            --space-md:     2rem;
+            --space-lg:     4rem;
+            --space-xl:     7rem;
+            --text-xs:      0.68rem;
+            --text-sm:      0.88rem;
+            --text-base:    1rem;
+            --text-lg:      1.15rem;
+            --text-xl:      clamp(2.4rem, 5vw, 3.8rem);
+            --text-hero:    clamp(5.5rem, 15vw, 12rem);
+            --leading-body: 1.75;
+            --leading-tight: 1.15;
+            --shadow-sm:    0 4px 20px rgba(0,0,0,0.2);
+            --shadow-md:    0 12px 40px rgba(0,0,0,0.3);
+            --shadow-glow:  0 12px 40px rgba(200,160,224,0.25);
+            --radius-sm:    0.75rem;
+            --radius-md:    1.5rem;
+            --radius-lg:    2rem;
+            --transition:   0.3s cubic-bezier(0.16,1,0.3,1);
         }
 
         html { scroll-behavior: smooth; }
@@ -35,7 +61,26 @@
             font-family: 'Inter', sans-serif;
             font-weight: 300;
             overflow-x: hidden;
-            line-height: 1.6;
+            line-height: var(--leading-body);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        body.loaded { opacity: 1; }
+
+        .skip-link {
+            position: absolute; top: -100%; left: 1rem; z-index: 10000;
+            padding: 0.75rem 1.25rem; border-radius: var(--radius-sm);
+            background: var(--purple); color: var(--bg);
+            font-size: var(--text-sm); font-weight: 600; text-decoration: none;
+            transition: top 0.2s;
+        }
+        .skip-link:focus { top: 1rem; }
+
+        :focus { outline: none; }
+        :focus-visible {
+            outline: 2px solid var(--teal);
+            outline-offset: 3px;
+            border-radius: 4px;
         }
 
         /* ─── SCROLLBAR ─────────────────────────────── */
@@ -59,9 +104,13 @@
             backdrop-filter: blur(16px) saturate(1.4);
             background: rgba(6,6,14,0.55);
             border-bottom: 1px solid var(--border);
-            transition: background 0.4s;
+            transition: background 0.4s, padding 0.4s, box-shadow 0.4s;
         }
-        nav.scrolled { background: rgba(6,6,14,0.92); }
+        nav.scrolled {
+            background: rgba(6,6,14,0.92);
+            box-shadow: var(--shadow-sm);
+            padding-top: 1rem; padding-bottom: 1rem;
+        }
 
         .nav-logo {
             font-family: 'Dancing Script', cursive;
@@ -78,7 +127,20 @@
             font-size: 0.78rem; font-weight: 400; letter-spacing: 0.13em; text-transform: uppercase;
             transition: color 0.3s;
         }
-        .nav-links a:hover { color: var(--text); }
+        .nav-links a {
+            position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+            height: 1px; background: var(--grad); transform: scaleX(0);
+            transition: transform var(--transition);
+        }
+        .nav-links a:hover,
+        .nav-links a.active { color: var(--text); }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { transform: scaleX(1); }
+
+        .nav-cta::after { display: none; }
 
         .nav-cta {
             padding: 0.55rem 1.5rem !important;
@@ -97,7 +159,9 @@
 
         .nav-hamburger {
             display: none; flex-direction: column; gap: 5px;
-            cursor: pointer; padding: 4px;
+            cursor: pointer; padding: 8px; border: none; background: none;
+            min-width: 44px; min-height: 44px;
+            align-items: center; justify-content: center;
         }
         .nav-hamburger span {
             width: 24px; height: 1.5px;
@@ -187,25 +251,37 @@
             display: inline-block; text-decoration: none;
             padding: 0.9rem 2.4rem; border-radius: 999px;
             background: var(--grad); color: #18081a;
-            font-weight: 600; font-size: 0.88rem; letter-spacing: 0.06em;
-            border: none; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+            font-weight: 600; font-size: var(--text-sm); letter-spacing: 0.06em;
+            border: none; cursor: pointer;
+            transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+            min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
         }
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(200,160,224,0.35);
+            box-shadow: var(--shadow-glow);
+            filter: brightness(1.05);
         }
+        .btn-primary:active { transform: translateY(-1px); }
         .btn-ghost {
-            display: inline-block; text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center;
+            text-decoration: none;
             padding: 0.9rem 2.4rem; border-radius: 999px;
             border: 1px solid var(--border); background: var(--glass);
-            color: var(--text); font-size: 0.88rem; letter-spacing: 0.06em;
+            color: var(--text); font-size: var(--text-sm); letter-spacing: 0.06em;
             cursor: pointer; backdrop-filter: blur(8px);
-            transition: transform 0.3s, border-color 0.3s, background 0.3s;
+            transition: transform var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition);
+            min-height: 44px;
         }
         .btn-ghost:hover {
             transform: translateY(-3px);
             border-color: var(--purple); background: rgba(200,160,224,0.07);
+            box-shadow: var(--shadow-sm);
         }
+        .btn-teal {
+            background: linear-gradient(135deg, var(--teal), #5ab5a5);
+            color: #0a1a16;
+        }
+        .btn-teal:hover { box-shadow: 0 12px 40px rgba(110,201,184,0.3); }
 
         /* ─── HERO STATS ─────────────────────────────── */
         .hero-stats {
@@ -244,11 +320,20 @@
 
         /* ─── SECTION COMMON ──────────────────────────── */
         .section-wrap {
-            max-width: 1180px; margin: 0 auto; padding: 7rem 2rem;
+            max-width: 1180px; margin: 0 auto; padding: var(--space-xl) var(--space-md);
+        }
+        .section-alt {
+            background: var(--bg2);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .section-divider {
+            height: 1px; max-width: 1180px; margin: 0 auto;
+            background: var(--grad-subtle);
         }
         .s-label {
-            display: flex; align-items: center; gap: 1rem;
-            font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase;
+            display: flex; align-items: center; gap: var(--space-sm);
+            font-size: var(--text-xs); letter-spacing: 0.28em; text-transform: uppercase;
             color: var(--purple); margin-bottom: 1.2rem;
         }
         .s-label::after {
@@ -256,7 +341,8 @@
         }
         .s-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 300; line-height: 1.15;
+            font-size: var(--text-xl); font-weight: 300; line-height: var(--leading-tight);
+            letter-spacing: -0.01em;
             margin-bottom: 1.5rem;
         }
         .s-title em {
@@ -281,12 +367,17 @@
             background: radial-gradient(ellipse at 50% 0%, rgba(200,160,224,0.09) 0%, transparent 65%);
             pointer-events: none;
         }
-        .about-card-logo {
-            font-family: 'Dancing Script', cursive; font-size: 4.5rem; font-weight: 700;
-            background: var(--grad);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            background-clip: text; line-height: 1; margin-bottom: 0.8rem;
-            filter: drop-shadow(0 0 24px rgba(200,160,224,0.35));
+        .about-card-logo-img {
+            width: 140px; height: 140px; border-radius: 50%;
+            object-fit: cover; margin: 0 auto 1rem; display: block;
+            border: 2px solid var(--border);
+            box-shadow: 0 0 40px rgba(200,160,224,0.2);
+            filter: saturate(0.95) contrast(1.02);
+            transition: transform var(--transition), box-shadow var(--transition);
+        }
+        .about-card:hover .about-card-logo-img {
+            transform: scale(1.03);
+            box-shadow: 0 0 50px rgba(200,160,224,0.3);
         }
         .about-card-sub {
             font-size: 0.62rem; letter-spacing: 0.38em; text-transform: uppercase; color: var(--dim);
@@ -296,8 +387,11 @@
         .tag {
             padding: 0.35rem 1rem; border-radius: 999px; font-size: 0.73rem;
             border: 1px solid var(--border); color: var(--dim); background: var(--glass);
+            transition: border-color var(--transition), color var(--transition), transform var(--transition);
         }
+        .tag:hover { border-color: var(--border-hover); transform: translateY(-1px); }
         .tag.hl { border-color: rgba(200,160,224,0.3); color: var(--purple); }
+        .tag.teal { border-color: rgba(110,201,184,0.3); color: var(--teal); background: var(--teal-dim); }
 
         .about-body p {
             font-size: 1.05rem; line-height: 1.9; color: var(--dim); margin-bottom: 1.4rem;
@@ -308,10 +402,14 @@
         .feature-item {
             display: flex; align-items: flex-start; gap: 0.8rem;
             padding: 1rem 1.1rem; background: var(--glass);
-            border: 1px solid var(--border); border-radius: 1rem; backdrop-filter: blur(8px);
-            transition: border-color 0.3s;
+            border: 1px solid var(--border); border-radius: var(--radius-sm); backdrop-filter: blur(8px);
+            transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition);
         }
-        .feature-item:hover { border-color: var(--border-hover); }
+        .feature-item:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
         .fi-icon { font-size: 1.15rem; flex-shrink: 0; margin-top: 0.1rem; }
         .fi-text { font-size: 0.83rem; color: var(--dim); line-height: 1.5; }
         .fi-text strong { display: block; color: var(--text); font-weight: 500; margin-bottom: 0.15rem; font-size: 0.88rem; }
@@ -342,6 +440,7 @@
         .a-card:hover::after { opacity: 1; }
         .a-card.dashed {
             border-style: dashed; cursor: pointer; border-color: rgba(255,255,255,0.06);
+            text-decoration: none; color: inherit; display: block;
         }
 
         .a-avatar {
@@ -350,6 +449,11 @@
             display: flex; align-items: center; justify-content: center;
             font-family: 'Dancing Script', cursive; font-size: 1.7rem; font-weight: 700;
             color: #18081a; margin-bottom: 1.5rem; position: relative; flex-shrink: 0;
+            overflow: hidden;
+        }
+        .a-avatar img {
+            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+            filter: saturate(0.92) contrast(1.05);
         }
         .a-avatar::before {
             content: ''; position: absolute; inset: -3px; border-radius: 50%;
@@ -430,7 +534,21 @@
             display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.85rem;
             border-radius: 999px; background: var(--glass);
             border: 1px solid var(--border); font-size: 0.72rem; color: var(--dim);
+            transition: border-color var(--transition), transform var(--transition), background var(--transition);
         }
+        .chip:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-1px);
+            background: var(--glass-md);
+        }
+
+        .e-poster {
+            width: 100%; aspect-ratio: 4/5; object-fit: cover;
+            border-bottom: 1px solid var(--border);
+            filter: saturate(0.9) contrast(1.03);
+            transition: filter var(--transition);
+        }
+        .e-card:hover .e-poster { filter: saturate(1) contrast(1.05); }
 
         /* ─── JOIN ───────────────────────────────────────── */
         #join-inner {
@@ -450,6 +568,55 @@
         }
         .join-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
+        /* ─── SCROLL PROGRESS ────────────────────────────── */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 2.5px; width: 0%;
+            background: var(--grad); z-index: 600;
+            transition: width 0.1s linear;
+        }
+
+        /* ─── BACK TO TOP ────────────────────────────────── */
+        .back-to-top {
+            position: fixed; bottom: 2rem; right: 2rem; z-index: 400;
+            width: 46px; height: 46px; border-radius: 50%;
+            background: var(--glass-md); border: 1px solid var(--border);
+            backdrop-filter: blur(12px); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: opacity var(--transition), transform var(--transition), border-color var(--transition), background var(--transition);
+        }
+        .back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        .back-to-top:hover { border-color: var(--purple); background: rgba(200,160,224,0.14); }
+        .back-to-top svg { width: 18px; height: 18px; }
+
+        /* ─── FAQ ────────────────────────────────────────── */
+        .faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 0.85rem; }
+        .faq-item {
+            background: var(--glass); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); overflow: hidden;
+            transition: border-color var(--transition);
+        }
+        .faq-item:hover { border-color: var(--border-hover); }
+        .faq-item summary {
+            padding: 1.3rem 1.6rem; cursor: pointer; list-style: none;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            font-size: 1rem; font-weight: 500; color: var(--text);
+        }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-item summary::after {
+            content: '+'; font-size: 1.4rem; font-weight: 300; color: var(--purple);
+            transition: transform var(--transition); flex-shrink: 0;
+        }
+        .faq-item[open] summary::after { transform: rotate(45deg); }
+        .faq-item .faq-a {
+            padding: 0 1.6rem 1.4rem; font-size: 0.9rem; line-height: 1.75; color: var(--dim);
+        }
+
+        /* ─── HERO ORB PARALLAX LAYER ────────────────────── */
+        .hero-orbs-layer {
+            position: absolute; inset: 0; transition: transform 0.3s ease-out; pointer-events: none;
+        }
+
         /* ─── FOOTER ─────────────────────────────────────── */
         footer {
             padding: 2.5rem 3.5rem 2rem;
@@ -466,6 +633,40 @@
         .f-links { display: flex; gap: 1.6rem; }
         .f-links a { font-size: 0.78rem; color: var(--dim); text-decoration: none; transition: color 0.3s; }
         .f-links a:hover { color: var(--text); }
+
+        /* ─── MOBILE NAV ───────────────────────────────── */
+        .mobile-nav {
+            display: none; position: fixed; inset: 0; z-index: 490;
+            background: rgba(6,6,14,0.96); backdrop-filter: blur(20px);
+            flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
+        }
+        .mobile-nav[hidden] { display: none !important; }
+        .mobile-nav.open { display: flex !important; }
+        .m-nav-link {
+            font-size: 2rem; font-family: 'Cormorant Garamond', serif;
+            color: var(--dim); text-decoration: none;
+            padding: 0.5rem 1rem; min-height: 44px;
+            display: flex; align-items: center;
+            transition: color var(--transition);
+        }
+        .m-nav-link:hover, .m-nav-link:focus-visible { color: var(--text); }
+        .m-nav-link.btn-primary { font-size: 1rem; color: #18081a; }
+
+        /* ─── LOADING ──────────────────────────────────── */
+        .page-loader {
+            position: fixed; inset: 0; z-index: 10001;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+        }
+        .page-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-logo {
+            font-family: 'Dancing Script', cursive; font-size: 3rem; font-weight: 700;
+            background: var(--grad-text);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
 
         /* ─── ANIMATIONS ─────────────────────────────────── */
         @keyframes float {
@@ -500,6 +701,17 @@
         .reveal-d3 { transition-delay: 0.3s; }
         .reveal-d4 { transition-delay: 0.45s; }
 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            html { scroll-behavior: auto; }
+            .reveal { opacity: 1; transform: none; }
+            #rain-canvas { display: none; }
+        }
+
         /* ─── RESPONSIVE ─────────────────────────────────── */
         @media (max-width: 900px) {
             nav { padding: 1.1rem 1.5rem; }
@@ -507,12 +719,14 @@
             .nav-hamburger { display: flex; }
 
             #about-inner { grid-template-columns: 1fr; gap: 3rem; }
+            #about-inner .about-card-wrap { order: -1; }
             .artists-grid { grid-template-columns: 1fr; }
             .events-layout { grid-template-columns: 1fr; gap: 3rem; }
             #join-inner { padding: 3.5rem 1.8rem; }
-            .hero-stats { gap: 2.5rem; }
+            .hero-stats { gap: 2.5rem; flex-wrap: wrap; }
             footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
             .feature-grid { grid-template-columns: 1fr; }
+            .section-wrap { padding: 5rem 1.5rem; }
         }
         @media (max-width: 600px) {
             .artists-grid { grid-template-columns: 1fr; }
@@ -522,43 +736,51 @@
 </head>
 <body>
 
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div class="loader-logo">Petrichor</div>
+</div>
+
 <!-- ─── NAV ─────────────────────────────────────────── -->
-<nav id="mainNav">
-    <a href="#hero" class="nav-logo">Petrichor</a>
-    <ul class="nav-links">
-        <li><a href="#about">About</a></li>
-        <li><a href="#artists">Artists</a></li>
-        <li><a href="#events">Events</a></li>
-        <li><a href="#join" class="nav-cta">Join Us</a></li>
+<nav id="mainNav" aria-label="Main navigation">
+    <a href="#hero" class="nav-logo" aria-label="Petrichor — Home">Petrichor</a>
+    <ul class="nav-links" role="list">
+        <li><a href="#about" data-section="about">About</a></li>
+        <li><a href="#artists" data-section="artists">Artists</a></li>
+        <li><a href="#events" data-section="events">Events</a></li>
+        <li><a href="#join" class="nav-cta" data-section="join">Join Us</a></li>
     </ul>
-    <div class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileNav">
         <span></span><span></span><span></span>
-    </div>
+    </button>
 </nav>
 
 <!-- Mobile nav overlay -->
-<div id="mobileNav" style="
-    display:none; position:fixed; inset:0; z-index:490;
-    background:rgba(6,6,14,0.96); backdrop-filter:blur(20px);
-    flex-direction:column; align-items:center; justify-content:center; gap:2.5rem;
-">
-    <a href="#about" class="m-nav-link" style="font-size:2rem;font-family:'Cormorant Garamond',serif;color:var(--dim);text-decoration:none;">About</a>
-    <a href="#artists" class="m-nav-link" style="font-size:2rem;font-family:'Cormorant Garamond',serif;color:var(--dim);text-decoration:none;">Artists</a>
-    <a href="#events" class="m-nav-link" style="font-size:2rem;font-family:'Cormorant Garamond',serif;color:var(--dim);text-decoration:none;">Events</a>
-    <a href="#join" class="m-nav-link btn-primary" style="font-size:1rem;">Join Us</a>
+<div id="mobileNav" class="mobile-nav" role="dialog" aria-modal="true" aria-label="Mobile navigation" hidden>
+    <a href="#about" class="m-nav-link" data-section="about">About</a>
+    <a href="#artists" class="m-nav-link" data-section="artists">Artists</a>
+    <a href="#events" class="m-nav-link" data-section="events">Events</a>
+    <a href="#join" class="m-nav-link btn-primary" data-section="join">Join Us</a>
 </div>
+
+<main id="main">
 
 <!-- ─── HERO ──────────────────────────────────────────── -->
 <section id="hero">
     <canvas id="rain-canvas"></canvas>
-    <div class="hero-orb hero-orb-1"></div>
-    <div class="hero-orb hero-orb-2"></div>
-    <div class="hero-orb hero-orb-3"></div>
+    <div class="hero-orbs-layer" id="heroOrbsLayer">
+        <div class="hero-orb hero-orb-1"></div>
+        <div class="hero-orb hero-orb-2"></div>
+        <div class="hero-orb hero-orb-3"></div>
+    </div>
 
     <div class="hero-inner">
         <div class="hero-pill">
             <div class="dot"></div>
-            Get2gether × Petrichor &nbsp;·&nbsp; Community Collaboration
+            Petrichor &nbsp;·&nbsp; Community Collaboration
         </div>
 
         <h1 class="hero-title">Petrichor</h1>
@@ -577,7 +799,7 @@
 
         <div class="hero-stats">
             <div class="h-stat">
-                <div class="h-stat-num">42+</div>
+                <div class="h-stat-num" data-count="42" data-suffix="+">0+</div>
                 <div class="h-stat-lbl">Members</div>
             </div>
             <div class="h-stat">
@@ -621,17 +843,18 @@
 </div>
 
 <!-- ─── ABOUT ─────────────────────────────────────────── -->
+<div class="section-alt">
 <div class="section-wrap">
     <div id="about-inner">
         <!-- Visual -->
-        <div class="reveal">
+        <div class="about-card-wrap reveal">
             <div class="about-card">
-                <div class="about-card-logo">Petrichor</div>
+                <img src="assets/petrichor-logo.jpeg" alt="Petrichor logo — Mellow Out With Us" class="about-card-logo-img" width="140" height="140" loading="lazy">
                 <p class="about-card-sub">Mellow Out With Us</p>
                 <div class="tag-cloud">
                     <span class="tag hl">Music</span>
                     <span class="tag hl">Art</span>
-                    <span class="tag hl">Mental Health</span>
+                    <span class="tag teal">Mental Health</span>
                     <span class="tag">Live Shows</span>
                     <span class="tag">Open Mics</span>
                     <span class="tag">Collaborations</span>
@@ -678,6 +901,9 @@
         </div>
     </div>
 </div>
+</div>
+
+<div class="section-divider" aria-hidden="true"></div>
 
 <!-- ─── ARTISTS ───────────────────────────────────────── -->
 <div class="section-wrap" id="artists">
@@ -721,10 +947,10 @@
                 </div>
             </div>
             <div class="a-socials">
-                <a href="https://www.instagram.com/itsyour.kiya" target="_blank" rel="noopener" class="s-icon" title="Instagram">
+                <a href="https://www.instagram.com/itsyour.kiya" target="_blank" rel="noopener" class="s-icon" aria-label="Kiya on Instagram" title="Instagram">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                 </a>
-                <a href="https://youtube.com/@kiyaofficial2026" target="_blank" rel="noopener" class="s-icon" title="YouTube">
+                <a href="https://youtube.com/@kiyaofficial2026" target="_blank" rel="noopener" class="s-icon" aria-label="Kiya on YouTube" title="YouTube">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.47a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
                 </a>
             </div>
@@ -732,7 +958,9 @@
 
         <!-- Petrichor Community -->
         <div class="a-card reveal reveal-d2">
-            <div class="a-avatar" style="background:linear-gradient(135deg,#f9c6d3,#c8a0e0);">P</div>
+            <div class="a-avatar" aria-hidden="true">
+                <img src="assets/petrichor-logo.jpeg" alt="" width="68" height="68" loading="lazy">
+            </div>
             <h3 class="a-name">Petrichor.live</h3>
             <p class="a-handle">@petrichor.live</p>
             <div class="a-roles">
@@ -752,8 +980,8 @@
                     <div class="a-stat-lbl">Followers</div>
                 </div>
                 <div>
-                    <div class="a-stat-num">G2G</div>
-                    <div class="a-stat-lbl">Partner</div>
+                    <div class="a-stat-num">Live</div>
+                    <div class="a-stat-lbl">Shows</div>
                 </div>
                 <div>
                     <div class="a-stat-num">∞</div>
@@ -761,14 +989,14 @@
                 </div>
             </div>
             <div class="a-socials">
-                <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener" class="s-icon" title="Instagram">
+                <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener" class="s-icon" aria-label="Petrichor on Instagram" title="Instagram">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
                 </a>
             </div>
         </div>
 
         <!-- You? -->
-        <div class="a-card dashed reveal reveal-d3" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1','_blank')" style="cursor:pointer">
+        <a href="https://docs.google.com/forms/d/1D5NPg6yv6AOxZveiXwSXF6MkU6VkMBzgOqY5f531_n8/viewform?edit_requested=true" target="_blank" rel="noopener" class="a-card dashed reveal reveal-d3" aria-label="Apply to join Petrichor — fill the artist form">
             <div class="a-avatar ghost">+</div>
             <h3 class="a-name" style="color:var(--dim);">Your Name Here</h3>
             <p class="a-handle">Your Stage Awaits</p>
@@ -783,14 +1011,17 @@
                 Every iconic artist started somewhere. Petrichor might just be your somewhere.
             </p>
             <div style="margin-top:1.5rem;">
-                <span class="btn-primary" style="font-size:0.82rem;padding:0.7rem 1.6rem;">Fill the Form →</span>
+                <span class="btn-primary" style="font-size:0.82rem;padding:0.7rem 1.6rem;pointer-events:none;">Fill the Form →</span>
             </div>
-        </div>
+        </a>
 
     </div>
 </div>
 
+<div class="section-divider" aria-hidden="true"></div>
+
 <!-- ─── EVENTS ────────────────────────────────────────── -->
+<div class="section-alt">
 <div class="section-wrap" id="events">
     <div class="events-layout">
 
@@ -799,7 +1030,7 @@
             <h2 class="s-title reveal">Your moment.<br><em>Your stage.</em></h2>
 
             <div class="collab-pill reveal reveal-d1">
-                🤝 &nbsp;<strong>Get2gether</strong>&nbsp; × Petrichor Collaboration
+                🤝 &nbsp;<strong>Petrichor</strong>&nbsp; Community Collaboration
             </div>
 
             <p class="e-text reveal reveal-d2">
@@ -810,11 +1041,12 @@
             <p class="e-text reveal reveal-d3">
                 <em>"Express. Inspire. Connect. Come perform or just come enjoy."</em>
             </p>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1" target="_blank" rel="noopener" class="btn-primary reveal reveal-d4">Apply to Perform ✦</a>
+            <a href="https://docs.google.com/forms/d/1D5NPg6yv6AOxZveiXwSXF6MkU6VkMBzgOqY5f531_n8/viewform?edit_requested=true" target="_blank" rel="noopener" class="btn-primary reveal reveal-d4">Apply to Perform ✦</a>
         </div>
 
         <div>
             <div class="e-card reveal reveal-d1">
+                <img id="eventPoster" src="assets/open-mic-poster.jpeg" alt="Open Mic Night event poster — Your Moment, Your Stage" class="e-poster" width="600" height="750" loading="lazy">
                 <div class="e-card-head">
                     <div class="e-type">Flagship Event</div>
                     <h3 class="e-name">Open Mic Night</h3>
@@ -858,6 +1090,35 @@
 
     </div>
 </div>
+</div>
+
+<!-- ─── FAQ ───────────────────────────────────────────── -->
+<div class="section-wrap">
+    <div class="artists-header reveal">
+        <div class="s-label" style="justify-content:center;">FAQ</div>
+        <h2 class="s-title">Questions, <em>answered</em></h2>
+    </div>
+    <div class="faq-list">
+        <details class="faq-item reveal">
+            <summary>What is Petrichor?</summary>
+            <p class="faq-a">A community where music, art, and mental health come together — through open mics, live shows, and creative collaborations. A space for people who create from the heart.</p>
+        </details>
+        <details class="faq-item reveal reveal-d1">
+            <summary>Do I need experience to perform?</summary>
+            <p class="faq-a">Not at all. First-timers are as welcome as seasoned performers — Petrichor is built for artists finding their voice, not just showing it off.</p>
+        </details>
+        <details class="faq-item reveal reveal-d2">
+            <summary>Is there a cost to join or perform?</summary>
+            <p class="faq-a">Joining the community and applying to perform is free. Just fill out the artist form and we'll reach out with the details.</p>
+        </details>
+        <details class="faq-item reveal reveal-d3">
+            <summary>What kinds of acts can I bring?</summary>
+            <p class="faq-a">Singing, storytelling, stand-up, spoken word, bands, visual art — if it's honest self-expression, it belongs on our stage.</p>
+        </details>
+    </div>
+</div>
+
+<div class="section-divider" aria-hidden="true"></div>
 
 <!-- ─── JOIN ──────────────────────────────────────────── -->
 <div class="section-wrap" id="join">
@@ -869,7 +1130,7 @@
             we'd love to know you better." 🌧️✨
         </p>
         <div class="join-btns">
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1" target="_blank" rel="noopener" class="btn-primary">
+            <a href="https://docs.google.com/forms/d/1D5NPg6yv6AOxZveiXwSXF6MkU6VkMBzgOqY5f531_n8/viewform?edit_requested=true" target="_blank" rel="noopener" class="btn-primary btn-teal">
                 Fill the Artist Form ✦
             </a>
             <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener" class="btn-ghost">
@@ -881,13 +1142,14 @@
         </div>
     </div>
 </div>
+</main>
 
 <!-- ─── FOOTER ────────────────────────────────────────── -->
 <footer>
     <a href="#hero" class="f-logo">Petrichor</a>
     <p class="f-tagline">Breaking silence on mental health, one stage at a time. 🌧️✨</p>
     <div class="f-links">
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLScDwUit7FnvHukG_KfNHeZdnih3KeQl_1zHiLQR35e_8ptreA/viewform?pli=1" target="_blank" rel="noopener">Join Form</a>
+        <a href="https://docs.google.com/forms/d/1D5NPg6yv6AOxZveiXwSXF6MkU6VkMBzgOqY5f531_n8/viewform?edit_requested=true" target="_blank" rel="noopener">Join Form</a>
         <a href="https://www.instagram.com/petrichor.live" target="_blank" rel="noopener">Instagram</a>
         <a href="#about">About</a>
         <a href="#artists">Artists</a>
@@ -895,8 +1157,34 @@
     </div>
 </footer>
 
+<button id="backToTop" class="back-to-top" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+</button>
+
 <script>
+// ─── EVENT POSTER (from admin config) ────────────────────
+fetch('/api/config')
+    .then(r => r.ok ? r.json() : null)
+    .then(config => {
+        if (config?.eventPoster) {
+            const poster = document.getElementById('eventPoster');
+            if (poster) poster.src = config.eventPoster;
+        }
+    })
+    .catch(() => {});
+
+// ─── PAGE LOAD ───────────────────────────────────────────
+window.addEventListener('load', () => {
+    document.body.classList.add('loaded');
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+        loader.classList.add('hidden');
+        loader.setAttribute('aria-hidden', 'true');
+    }
+});
+
 // ─── RAIN CANVAS ──────────────────────────────────────────
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const canvas = document.getElementById('rain-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -920,6 +1208,7 @@ const drops = Array.from({ length: 140 }, () => ({
 }));
 
 function drawRain() {
+    if (prefersReducedMotion) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drops.forEach(d => {
         const g = ctx.createLinearGradient(d.x, d.y, d.x - 0.8, d.y + d.len);
@@ -939,7 +1228,7 @@ function drawRain() {
     });
     requestAnimationFrame(drawRain);
 }
-drawRain();
+if (!prefersReducedMotion) drawRain();
 
 // ─── SCROLL REVEAL ───────────────────────────────────────
 const revealObs = new IntersectionObserver((entries) => {
@@ -948,32 +1237,93 @@ const revealObs = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 
-// ─── NAV SCROLL ──────────────────────────────────────────
+// ─── NAV SCROLL & ACTIVE SECTION ─────────────────────────
 const nav = document.getElementById('mainNav');
-window.addEventListener('scroll', () => {
+const navLinks = document.querySelectorAll('.nav-links a[data-section], .m-nav-link[data-section]');
+const sections = ['about', 'artists', 'events', 'join'].map(id => document.getElementById(id)).filter(Boolean);
+const scrollProgress = document.getElementById('scrollProgress');
+const backToTop = document.getElementById('backToTop');
+
+function updateNav() {
     nav.classList.toggle('scrolled', window.scrollY > 60);
-}, { passive: true });
+    backToTop.classList.toggle('show', window.scrollY > 600);
+
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    scrollProgress.style.width = (scrollable > 0 ? window.scrollY / scrollable * 100 : 0) + '%';
+
+    let current = '';
+    sections.forEach(section => {
+        const top = section.offsetTop - 120;
+        if (window.scrollY >= top) current = section.id;
+    });
+
+    navLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.section === current);
+    });
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+});
+
+// ─── HERO STAT COUNT-UP ──────────────────────────────────
+document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count, 10);
+    const suffix = el.dataset.suffix || '';
+    if (prefersReducedMotion) { el.textContent = target + suffix; return; }
+    const duration = 1400;
+    const start = performance.now();
+    (function tick(now) {
+        const p = Math.min((now - start) / duration, 1);
+        el.textContent = Math.floor(p * target) + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+    })(start);
+});
+
+// ─── HERO ORB PARALLAX ───────────────────────────────────
+if (!prefersReducedMotion) {
+    const heroOrbsLayer = document.getElementById('heroOrbsLayer');
+    document.getElementById('hero').addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth - 0.5;
+        const y = e.clientY / window.innerHeight - 0.5;
+        heroOrbsLayer.style.transform = `translate(${x * 30}px, ${y * 30}px)`;
+    }, { passive: true });
+}
 
 // ─── MOBILE NAV ──────────────────────────────────────────
 const hamburger = document.getElementById('hamburger');
 const mobileNav = document.getElementById('mobileNav');
+const hamburgerSpans = hamburger.querySelectorAll('span');
 
-hamburger.addEventListener('click', () => {
-    const open = mobileNav.style.display === 'flex';
-    mobileNav.style.display = open ? 'none' : 'flex';
-    hamburger.querySelectorAll('span')[0].style.transform = open ? '' : 'translateY(6.5px) rotate(45deg)';
-    hamburger.querySelectorAll('span')[1].style.opacity = open ? '' : '0';
-    hamburger.querySelectorAll('span')[2].style.transform = open ? '' : 'translateY(-6.5px) rotate(-45deg)';
-});
+function setMobileNav(open) {
+    mobileNav.classList.toggle('open', open);
+    mobileNav.hidden = !open;
+    hamburger.setAttribute('aria-expanded', open);
+    hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    hamburgerSpans[0].style.transform = open ? 'translateY(6.5px) rotate(45deg)' : '';
+    hamburgerSpans[1].style.opacity = open ? '0' : '';
+    hamburgerSpans[2].style.transform = open ? 'translateY(-6.5px) rotate(-45deg)' : '';
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) mobileNav.querySelector('.m-nav-link')?.focus();
+}
+
+hamburger.addEventListener('click', () => setMobileNav(!mobileNav.classList.contains('open')));
 
 mobileNav.querySelectorAll('.m-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-        mobileNav.style.display = 'none';
-        hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
-    });
+    link.addEventListener('click', () => setMobileNav(false));
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileNav.classList.contains('open')) {
+        setMobileNav(false);
+        hamburger.focus();
+    }
 });
 
 // ─── SPARKLE TRAIL ──────────────────────────────────────
+if (!prefersReducedMotion) {
 const sparkleChars = ['✦', '✧', '⋆', '·', '✺', '⁺'];
 const sparkleColors = ['#f4a8c0','#c8a0e0','#a8bef4','#f0cc78'];
 let lastSparkle = 0;
@@ -983,6 +1333,7 @@ document.addEventListener('mousemove', (e) => {
     if (Math.random() > 0.88) {
         lastSparkle = Date.now();
         const el = document.createElement('div');
+        el.setAttribute('aria-hidden', 'true');
         el.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
         const size = Math.random() * 10 + 7;
         el.style.cssText = `
@@ -998,16 +1349,7 @@ document.addEventListener('mousemove', (e) => {
         setTimeout(() => el.remove(), 900);
     }
 }, { passive: true });
-
-// Inject sparkle keyframes dynamically
-const style = document.createElement('style');
-style.textContent = `
-@keyframes sparkleAnim {
-    0%  { opacity:0; transform: scale(0) rotate(0deg) translateY(0); }
-    40% { opacity:1; transform: scale(1) rotate(120deg) translateY(-8px); }
-    100%{ opacity:0; transform: scale(0.2) rotate(240deg) translateY(-20px); }
-}`;
-document.head.appendChild(style);
+}
 
 // ─── SMOOTH ANCHOR SCROLL ───────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(a => {
@@ -1015,7 +1357,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         const target = document.querySelector(a.getAttribute('href'));
         if (target) {
             e.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
         }
     });
 });
