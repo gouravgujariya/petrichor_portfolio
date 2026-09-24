@@ -542,8 +542,9 @@
             background: var(--glass-md);
         }
 
+        /* ponytail: posters show at their own ratio - admin can upload any size */
         .e-poster {
-            width: 100%; aspect-ratio: 4/5; object-fit: cover;
+            width: 100%; height: auto; display: block;
             border-bottom: 1px solid var(--border);
             filter: saturate(0.9) contrast(1.03);
             transition: filter var(--transition);
@@ -1070,7 +1071,7 @@
             </div>
 
             <div class="e-card reveal reveal-d1">
-                <img id="eventPoster" src="assets/open-mic-poster.jpeg" alt="Open Mic Night event poster — Your Moment, Your Stage" class="e-poster" width="600" height="750" loading="lazy">
+                <img id="eventPoster" src="assets/open-mic-poster.jpeg" alt="Open Mic Night event poster — Your Moment, Your Stage" class="e-poster" width="717" height="1600" loading="lazy">
                 <div class="e-card-head">
                     <div class="e-type">Flagship Event</div>
                     <h3 class="e-name">Open Mic Night</h3>
